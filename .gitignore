@@ -1,0 +1,5 @@
+/.komodotools
+.includepath
+.project
+log
+t/playground_script.pl
