@@ -32,8 +32,8 @@ sub startup {
   my $r = $self->routes;
 
   my $new_connections = {};
-  my %clients_zones = ();
-  my %connection_id_group_id_map = ();
+  my $clients_zones = {};
+  my $connection_id_group_id_map = {};
     
   my $message_handler = $self->get_bean('message_handler');  
     
@@ -56,19 +56,27 @@ sub startup {
             sub {
                 my ($self, $msg) = @_;
     
-                $message_handler-> 
+                $message_handler->handle_message(
+                    $msg, 
+                    $id,
+                    {
+                        'new_connections' => $new_connections,
+                        'connections_groups' => $clients_zones,
+                        'connection_id_group_id_map' => $connection_id_group_id_map,	
+                    }
+                );
     
-                my $json = Mojo::JSON->new;
-                my $dt   = DateTime->now( time_zone => 'Asia/Tokyo');
-
-                for (keys %$new_connections) {
-                    $new_connections->{$_}->send(
-                        $json->encode({
-                            hms  => $dt->hms,
-                            text => $msg,
-                        })
-                    );
-                }
+#                my $json = Mojo::JSON->new;
+#                my $dt   = DateTime->now( time_zone => 'Asia/Tokyo');
+#
+#                for (keys %$new_connections) {
+#                    $new_connections->{$_}->send(
+#                        $json->encode({
+#                            hms  => $dt->hms,
+#                            text => $msg,
+#                        })
+#                    );
+#                }
             }
         );
 
