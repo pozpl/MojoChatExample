@@ -7,7 +7,7 @@ use Moo;
 with('ClubChat::Authentication::AuthenticationServiceRole');
 
 #redis connection
-has 'redis' => ('is' => 'ro');
+has 'redis' => ('is' => 'ro', 'required' => 1,);
 
 
 sub is_authorised(){

@@ -8,10 +8,10 @@ use AnyEvent::Redis::RipeRedis;
 use JSON;
 
 #redis connection handler
-has 'redis_handler' => ('is' => 'ro');
+has 'redis_handler' => ('is' => 'ro', 'required' => 1,);
 
 #channel to subscribe
-has 'channel' => ('is' => 'ro');
+has 'channel' => ('is' => 'ro', 'required' => 1,);
  
 sub publicate_message(){
 	my ($self, $message_href) = @_;
