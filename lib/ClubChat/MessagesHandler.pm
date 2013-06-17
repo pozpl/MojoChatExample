@@ -9,10 +9,26 @@ use Moo;
 use JSON;
 
 #service to authenticate connections
-has 'authentication_service' => ('is' => 'ro');
+has 'authentication_service' => (
+    'is' => 'ro',
+    'isa' => sub{
+        if(! $_[0]->does('ClubChat::Authentication::AuthenticationServiceRole')){
+            die "authentication_service does not implements ClubChat::Authentication::AuthenticationServiceRole";
+        }
+    },
+    'required' => 1,
+);
 
 #service to register message in public/subscribe sistem
-has 'message_registrator' => ('is' => 'ro');
+has 'message_registrator' => (
+    'is' => 'ro',
+    'isa' => sub{
+        if(! $_[0]->does('ClubChat::MessagesPupSub::SubscriptionsService')){
+            die "message_registrator does not implements ClubChat::MessagesPupSub::SubscriptionsService";
+        }
+    },
+    'required' => 1,
+);
 
 sub handle_message(){
 	my ($self, $message_json, $connection_id, $connections_env_href) =@_;
@@ -69,7 +85,7 @@ sub __register_message(){
 	
 	my $message_publicated = 0;
 	if(exists $self->connections_groups->{$group_id}->{$connection_id}){
-		$message_publicated = $self->message_registrator->pub_message($message_href);
+		$message_publicated = $self->message_registrator->publicate_message($message_href);
 	}
 	
 	return $message_publicated;
