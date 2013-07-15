@@ -1,16 +1,26 @@
-pubsub_redis:
+publicate_redis:
     class: 'AnyEvent::Redis::RipeRedis'
     args:
-        host: 'localhost'
+        host: '127.0.0.1'
         port: 6379
         encoding: 'utf8'
-        reconnect: 20
-        connection_timeout: 5
+        reconnect: 1
+        connection_timeout: 1
+
+subscribe_redis:
+    class: 'AnyEvent::Redis::RipeRedis'
+    args:
+        host: '127.0.0.1'
+        port: 6379
+        encoding: 'utf8'
+        reconnect: 1
+        connection_timeout: 1
 
 subscriptions_service:
     class: 'ClubChat::MessagesPupSub::SubscriptionsService'
     args:
-        redis_handler: {ref: pubsub_redis}
+        redis_subscription_handler: {ref: subscribe_redis}
+        redis_publishing_handler: {ref: publicate_redis}
         channel: 'club_chat_ps'
 authentication_service:
     class: 'ClubChat::Authentication::AuthenticationServiceDummy'
@@ -18,6 +28,6 @@ messages_handler:
     class: 'ClubChat::MessagesHandler'
     args:
         authentication_service: {ref:authentication_service}
-        message_registrator: {ref:message_registrator}
+        message_registrator: {ref:subscriptions_service}
 
     

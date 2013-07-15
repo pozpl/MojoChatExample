@@ -32,15 +32,19 @@ sub startup {
 	my $new_connections            = {};
 	my $clients_zones              = {};
 	my $connection_id_group_id_map = {};
-
+	
+	my $cv = AE::cv;
+	
+    print "AHTUNG \n";
 	my $message_handler = $self->get_bean('message_handler');
-
+	print "message handler \n";
+    my $subscription_service = $self->get_bean('subscriptions_service');
+    print "message subscriber \n";
+    
+    $subscription_service->subscribe_for_message($clients_zones);
+    print "subscription done \n";
+    
 	$r->get( '/' => 'index' );
-
-	#  $r->get('/chat' => sub {
-	#  	my $self = shift;
-	#  	$self->render(message => 'Welcome');
-	#  });
 
 	$r->websocket(
 		'/chat' => sub {
@@ -49,8 +53,7 @@ sub startup {
 			$self->app->log->debug( sprintf 'Client connected: %s', $self->tx );
 			my $id = sprintf "%s", $self->tx;
 			$new_connections->{$id} = $self->tx;
-			Mojo::IOLoop->stream( $self->tx->connection )->timeout(0)
-			  ;    #disable websoket timeout
+			Mojo::IOLoop->stream( $self->tx->connection )->timeout(0); #disable websoket timeout
 
 			$self->on(
 				message => sub {
@@ -61,22 +64,10 @@ sub startup {
 						{
 							'new_connections'    => $new_connections,
 							'connections_groups' => $clients_zones,
-							'connection_id_group_id_map' =>
-							  $connection_id_group_id_map,
+							'connection_id_group_id_map' => $connection_id_group_id_map,
 						}
 					);
-
-		  #                my $json = Mojo::JSON->new;
-		  #                my $dt   = DateTime->now( time_zone => 'Asia/Tokyo');
-		  #
-		  #                for (keys %$new_connections) {
-		  #                    $new_connections->{$_}->send(
-		  #                        $json->encode({
-		  #                            hms  => $dt->hms,
-		  #                            text => $msg,
-		  #                        })
-		  #                    );
-		  #                }
+	
 				}
 			);
 
@@ -88,9 +79,11 @@ sub startup {
 			);
 		}
 	);
+	
+	 $cv->recv();
 
 }
 
-my $cv = AE::cv;
+
 
 1;

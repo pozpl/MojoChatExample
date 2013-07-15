@@ -1,5 +1,6 @@
 package ClubChat::MessagesPupSub::SubscriptionsService;
 
+
 use warnings;
 use strict;
 
@@ -7,8 +8,11 @@ use Moo;
 use AnyEvent::Redis::RipeRedis;
 use JSON;
 
-#redis connection handler
-has 'redis_handler' => ('is' => 'ro', 'required' => 1,);
+#redis subscription connection handler
+has 'redis_subscription_handler' => ('is' => 'ro', 'required' => 1,);
+
+#redis publishing connection handler
+has 'redis_publishing_handler' => ('is' => 'ro', 'required' => 1,);
 
 #channel to subscribe
 has 'channel' => ('is' => 'ro', 'required' => 1,);
@@ -16,7 +20,7 @@ has 'channel' => ('is' => 'ro', 'required' => 1,);
 sub publicate_message(){
 	my ($self, $message_href) = @_;
 	my $encoded_message = encode_json($message_href);
-	$self->redis_handler->publish(
+	$self->redis_publishing_handler->publish(
 	   $self->channel,
 	   $encoded_message
 	);
@@ -25,8 +29,8 @@ sub publicate_message(){
  
 sub subscribe_for_message(){
 	my ($self, $connections_groups_href) = @_;
-	 my $redis_subscription_handler->subscribe( $self->channel, {           
-           on_message => sub {
+	$self->redis_subscription_handler->subscribe( ($self->channel), {           
+          on_message => sub {
              my $ch_name = shift;
              my $msg = shift;
              $self->__parse_income_message($msg, $connections_groups_href);
