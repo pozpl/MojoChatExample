@@ -33,7 +33,7 @@ sub subscribe_for_message(){
           on_message => sub {
              my $ch_name = shift;
              my $msg = shift;
-             $self->__parse_income_message($msg, $connections_groups_href);
+             $self->__parse_incoming_message($msg, $connections_groups_href);
            },           
          } );
 	
