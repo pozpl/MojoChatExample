@@ -16,5 +16,8 @@ with('ClubChat::Authentication::AuthenticationServiceRole');
 sub is_user_key_registred_in_group(){
     return 1;   
 }
+sub is_authorised(){
+    return 1;   
+}
 
 1;

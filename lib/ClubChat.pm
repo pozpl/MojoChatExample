@@ -5,6 +5,7 @@ use Mojo::Base 'Mojolicious';
 use DateTime;
 use Mojo::JSON;
 use File::Basename;
+use EV;
 use AnyEvent;
 
 my $BEANS_CONF_PATH = "/../config/beans.yml";
@@ -33,10 +34,10 @@ sub startup {
 	my $clients_zones              = {};
 	my $connection_id_group_id_map = {};
 	
-	my $cv = AE::cv;
+#	my $cv = AE::cv;
 	
     print "AHTUNG \n";
-	my $message_handler = $self->get_bean('message_handler');
+	my $message_handler = $self->get_bean('messages_handler');
 	print "message handler \n";
     my $subscription_service = $self->get_bean('subscriptions_service');
     print "message subscriber \n";
@@ -57,9 +58,8 @@ sub startup {
 
 			$self->on(
 				message => sub {
-					my ( $self, $msg ) = @_;
-
-					$message_handler->handle_message(
+					my ( $self, $msg ) = @_;                    
+					my $message_status = $message_handler->handle_message(
 						$msg, $id,
 						{
 							'new_connections'    => $new_connections,
@@ -67,6 +67,8 @@ sub startup {
 							'connection_id_group_id_map' => $connection_id_group_id_map,
 						}
 					);
+					
+					$self->tx->send($message_status);
 	
 				}
 			);
@@ -80,7 +82,7 @@ sub startup {
 		}
 	);
 	
-	 $cv->recv();
+#	 $cv->recv();
 
 }
 

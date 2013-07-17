@@ -27,7 +27,7 @@ authentication_service:
 messages_handler:
     class: 'ClubChat::MessagesHandler'
     args:
-        authentication_service: {ref:authentication_service}
-        message_registrator: {ref:subscriptions_service}
+        authentication_service: {ref: authentication_service}
+        message_registrator: {ref: subscriptions_service}
 
     
