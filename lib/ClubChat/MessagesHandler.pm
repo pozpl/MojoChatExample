@@ -23,7 +23,7 @@ has 'authentication_service' => (
 has 'message_registrator' => (
     'is' => 'ro',
     'isa' => sub{
-        if(! $_[0]->does('ClubChat::MessagesPupSub::SubscriptionsService')){
+        if(! $_[0]->isa('ClubChat::MessagesPupSub::SubscriptionsService')){
             die "message_registrator does not implements ClubChat::MessagesPupSub::SubscriptionsService";
         }
     },
@@ -34,13 +34,15 @@ sub handle_message(){
 	my ($self, $message_json, $connection_id, $connections_env_href) =@_;
 	my $message = decode_json($message_json);
 	
+	my $message_processing_status = 0;
 	if( $message->{'type'} eq 'auth'){		
 		my $auth_key = $message->{'auth_key'};
 		my $group_id = $message->{'group_id'};
-        $self->__process_authentication($connections_env_href,  $auth_key, $connection_id, $group_id);
+        $message_processing_status = $self->__process_authentication($connections_env_href,  $auth_key, $connection_id, $group_id);
 	}elsif($message->{'type'} eq 'msg'){
-		$self->__register_message($message, $connection_id);
+		$message_processing_status = $self->__register_message($message, $connection_id, $connections_env_href);
 	}	  
+	return $message_processing_status;
 }
 
 ############################################
@@ -79,12 +81,12 @@ sub __process_authentication(){
 # Comments   : ???
 # See Also   : n/a
 sub __register_message(){
-	my ($self, $message_href, $connection_id) = @_;
+	my ($self, $message_href, $connection_id, $connections_env_href) = @_;
 	
 	my $group_id = $message_href->{'group_id'};
 	
 	my $message_publicated = 0;
-	if(exists $self->connections_groups->{$group_id}->{$connection_id}){
+	if(exists $connections_env_href->{'connections_groups'}->{$group_id}->{$connection_id}){
 		$message_publicated = $self->message_registrator->publicate_message($message_href);
 	}
 	

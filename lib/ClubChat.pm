@@ -36,14 +36,10 @@ sub startup {
 	
 #	my $cv = AE::cv;
 	
-    print "AHTUNG \n";
-	my $message_handler = $self->get_bean('messages_handler');
-	print "message handler \n";
-    my $subscription_service = $self->get_bean('subscriptions_service');
-    print "message subscriber \n";
+    my $message_handler = $self->get_bean('messages_handler');
+	my $subscription_service = $self->get_bean('subscriptions_service');
     
     $subscription_service->subscribe_for_message($clients_zones);
-    print "subscription done \n";
     
 	$r->get( '/' => 'index' );
 
