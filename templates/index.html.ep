@@ -1,10 +1,11 @@
  <html>
       <head>
         <title>VL Night clubs chat client</title>
-        <script
+       <!-- <script
           type="text/javascript"
           src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"
-        ></script>
+        ></script>-->
+        <%= javascript('/js/jquery.js')%>
         <script type="text/javascript" >
         $(function () {
       $('#msg').focus();
@@ -13,20 +14,37 @@
         $('#log').val( $('#log').val() + text + "\n");
       };
   
-      var ws = new WebSocket('<%= url_for('chat')->to_abs %>');
+      var ws = new WebSocket('<%= url_for("chat")->to_abs %>');
       ws.onopen = function () {
         log('Connection opened');
+        var authMessage = {
+               'type' : 'auth',
+               'auth_key' : 'simple_auth_key',
+               'group_id' : 1234
+          };
+          var authMessageJson = JSON.stringify(authMessage);
+        ws.send(authMessageJson);
       };
   
       ws.onmessage = function (msg) {
         var res = JSON.parse(msg.data);
-        log('[' + res.hms + '] ' + res.text); 
+        if (res.type == 'status') {
+          log('status ' + res.status);
+        }else{
+          log('[' + res.type + '] ' + res.text);
+        }
       };
 
     $('#msg').keydown(function (e) {
         if (e.keyCode == 13 && $('#msg').val()) {
-            ws.send($('#msg').val());
-            $('#msg').val('');
+            var chatMessage = {
+               'type' : 'msg',
+               'group_id' : 1234,
+               'text' : $('#msg').val()
+          };
+            
+          ws.send(JSON.stringify(chatMessage));
+          $('#msg').val('');
         }
       });
     });

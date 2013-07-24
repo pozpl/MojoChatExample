@@ -5,9 +5,6 @@ use warnings;
 
 use FindBin;
 BEGIN { unshift @INC, "$FindBin::Bin/../lib" }
-BEGIN {
-  $ENV{MOJO_MODE}    = 'production';
-}
 # Start command line interface for application
 require Mojolicious::Commands;
 Mojolicious::Commands->start_app('ClubChat');

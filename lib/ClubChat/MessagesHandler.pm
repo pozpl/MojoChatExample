@@ -86,7 +86,8 @@ sub __register_message(){
 	my $group_id = $message_href->{'group_id'};
 	
 	my $message_publicated = 0;
-	if(exists $connections_env_href->{'connections_groups'}->{$group_id}->{$connection_id}){
+	if(exists $connections_env_href->{'connections_groups'}->{$group_id}->{$connection_id}){		
+		print "publication initiation\n";
 		$message_publicated = $self->message_registrator->publicate_message($message_href);
 	}
 	

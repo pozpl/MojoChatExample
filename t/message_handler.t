@@ -12,22 +12,25 @@ use Redis;
 use JSON;
 use ClubChat::Authentication::AuthenticationServiceDummy;
 use ClubChat::MessagesHandler;
+use ClubChat::RedisConnection::AnyEventRedis;
 my $cv = AE::cv();
 
-my $redis = AnyEvent::Redis::RipeRedis->new(
-    host     => '127.0.0.1',
-    port     => '6379',
-    #password => 'yourpass',
-    encoding => 'utf8',
-    on_error => sub {
-        my $err_msg  = shift;
-        my $err_code = shift;
-
-        print "$err_msg $err_code\n";
-    },
-    );
+#my $redis = AnyEvent::Redis::RipeRedis->new(
+#    host     => '127.0.0.1',
+#    port     => '6379',
+#    #password => 'yourpass',
+#    encoding => 'utf8',
+#    on_error => sub {
+#        my $err_msg  = shift;
+#        my $err_code = shift;
+#
+#        print "$err_msg $err_code\n";
+#    },
+#    );
+my $anyEventRedis = ClubChat::RedisConnection::AnyEventRedis->new(); 
+my $redis = $anyEventRedis->getConnection('127.0.0.1'); 
     
-my $redis_pub = Redis->new(); 
+my $redis_pub = $anyEventRedis->getConnection('127.0.0.1');
 #AnyEvent::Redis::RipeRedis->new(
 #    host     => '127.0.0.1',
 #    port     => '6379',

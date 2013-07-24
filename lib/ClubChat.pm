@@ -3,10 +3,11 @@ use Mojo::Base 'Mojolicious';
 
 # Normal route to controller
 use DateTime;
-use Mojo::JSON;
+use JSON;
 use File::Basename;
 use EV;
 use AnyEvent;
+use Data::Dump qw(dump);
 
 my $BEANS_CONF_PATH = "/../config/beans.yml";
 
@@ -20,7 +21,8 @@ sub startup {
 	my $self = shift;
 
 	my $current_working_directory = dirname(__FILE__);
-
+    
+    print "initialysing beans\n";
 	$self->plugin( 'BeamWire',
 		{ 'beans_conf' => $current_working_directory . $BEANS_CONF_PATH, } );
 
@@ -40,6 +42,7 @@ sub startup {
 	my $subscription_service = $self->get_bean('subscriptions_service');
     
     $subscription_service->subscribe_for_message($clients_zones);
+    print "subscribed for messages\n";
     
 	$r->get( '/' => 'index' );
 
@@ -54,7 +57,8 @@ sub startup {
 
 			$self->on(
 				message => sub {
-					my ( $self, $msg ) = @_;                    
+					my ( $self, $msg ) = @_;
+					print "message arrived to connection $id\n";                    
 					my $message_status = $message_handler->handle_message(
 						$msg, $id,
 						{
@@ -64,7 +68,13 @@ sub startup {
 						}
 					);
 					
-					$self->tx->send($message_status);
+#					dump($new_connections);
+#					dump($clients_zones);
+					dump($connection_id_group_id_map);
+					$self->tx->send(encode_json({
+						'type' => 'status', 
+						'status' => $message_status,
+					}));
 	
 				}
 			);
