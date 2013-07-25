@@ -18,6 +18,7 @@ has 'redis_publishing_handler' => ('is' => 'ro', 'required' => 1,);
 #channel to subscribe
 has 'channel' => ('is' => 'ro', 'required' => 1,);
 
+
 sub publicate_message(){
 	my ($self, $message_href) = @_;
 	print "publication stopt";

@@ -41,15 +41,19 @@ sub startup {
     my $message_handler = $self->get_bean('messages_handler');
 	my $subscription_service = $self->get_bean('subscriptions_service');
     
-    $subscription_service->subscribe_for_message($clients_zones);
-    print "subscribed for messages\n";
+    $self->hook(after_build_tx => sub {
+            my ($tx, $app) = @_;
+            $subscription_service->subscribe_for_message($clients_zones);
+            print "subscribed for messages\n";
+    });
+    
     
 	$r->get( '/' => 'index' );
 
 	$r->websocket(
 		'/chat' => sub {
 			my $self = shift;
-
+                    
 			$self->app->log->debug( sprintf 'Client connected: %s', $self->tx );
 			my $id = sprintf "%s", $self->tx;
 			$new_connections->{$id} = $self->tx;
@@ -91,7 +95,5 @@ sub startup {
 #	 $cv->recv();
 
 }
-
-
 
 1;
