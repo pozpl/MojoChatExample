@@ -22,8 +22,7 @@ sub startup {
 
 	my $current_working_directory = dirname(__FILE__);
     
-    print "initialysing beans\n";
-	$self->plugin( 'BeamWire',
+    $self->plugin( 'BeamWire',
 		{ 'beans_conf' => $current_working_directory . $BEANS_CONF_PATH, } );
 
 	# Documentation browser under "/perldoc"
@@ -43,8 +42,7 @@ sub startup {
     
     $self->hook(after_build_tx => sub {
             my ($tx, $app) = @_;
-            $subscription_service->subscribe_for_message($clients_zones);
-            print "subscribed for messages\n";
+            $subscription_service->subscribe_for_message($clients_zones);            
     });
     
     
@@ -61,8 +59,7 @@ sub startup {
 
 			$self->on(
 				message => sub {
-					my ( $self, $msg ) = @_;
-					print "message arrived to connection $id\n";                    
+					my ( $self, $msg ) = @_;					                   
 					my $message_status = $message_handler->handle_message(
 						$msg, $id,
 						{

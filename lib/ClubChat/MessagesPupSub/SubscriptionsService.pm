@@ -21,7 +21,6 @@ has 'channel' => ('is' => 'ro', 'required' => 1,);
 
 sub publicate_message(){
 	my ($self, $message_href) = @_;
-	print "publication stopt";
 	my $encoded_message = encode_json($message_href);	
 	my $publicator = &{$self->redis_publishing_handler};	
 	$publicator->publish(
@@ -38,7 +37,6 @@ sub subscribe_for_message(){
           on_message => sub {          	 
              my $ch_name = shift;
              my $msg = shift;
-             print "subscribed message $msg\n";
              $self->__parse_incoming_message($msg, $connections_groups_href);
            },           
          } );
@@ -58,7 +56,6 @@ sub __parse_incoming_message(){
 
 sub __resend_to_group(){
 	my ($self, $message_href,$group_connections_href) = @_;
-	print "resend to group\n";
 	for my $ws_connection (values %{$group_connections_href}){
 		my $msg_json_text = encode_json($message_href);
 		$ws_connection->send($msg_json_text);
