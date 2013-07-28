@@ -27,9 +27,9 @@ my $cv = AE::cv();
 #	},
 #	);
 my $anyEventRedis = ClubChat::RedisConnection::AnyEventRedis->new(); 
-my $redis = $anyEventRedis->getConnection('127.0.0.1'); 
+my $redis = $anyEventRedis->getConnectionSubscribe('127.0.0.1'); 
 	
-my $redis_pub = $anyEventRedis->getConnection('127.0.0.1'); 
+my $redis_pub = $anyEventRedis->getConnectionPublicate('127.0.0.1'); 
 #AnyEvent::Redis::RipeRedis->new(
 #    host     => '127.0.0.1',
 #    port     => '6379',
