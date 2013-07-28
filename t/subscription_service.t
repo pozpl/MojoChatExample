@@ -67,7 +67,6 @@ my $ws_connection = Test::MockObject->new();
 $ws_connection->mock('send', sub{
 	my ($self, $message_json) = @_;
 	$send_via_ws_message = 1;
-	print ($message_json);
 	ok(1, 'Message is send to an ws connection');
 	ok(encode_json(\%message) eq $message_json, 'Messages are the same ' . $message_json);
 	$cv->send();
