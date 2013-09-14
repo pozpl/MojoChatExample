@@ -13,15 +13,15 @@ publicate_redis:
 subscriptions_service:
     class: 'ClubChat::MessagesPupSub::SubscriptionsService'
     args:
-        redis_subscription_handler: {ref: subscribe_redis}
-        redis_publishing_handler: {ref: publicate_redis}
+        redis_subscription_handler: {$ref: subscribe_redis}
+        redis_publishing_handler: {$ref: publicate_redis}
         channel: 'club_chat_ps'
 authentication_service:
     class: 'ClubChat::Authentication::AuthenticationServiceDummy'
 messages_handler:
     class: 'ClubChat::MessagesHandler'
     args:
-        authentication_service: {ref: authentication_service}
-        message_registrator: {ref: subscriptions_service}
+        authentication_service: {$ref: authentication_service}
+        message_registrator: {$ref: subscriptions_service}
 
     
