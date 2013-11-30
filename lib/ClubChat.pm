@@ -72,7 +72,7 @@ sub startup {
 #					dump($new_connections);
 #					dump($clients_zones);
 #					dump($connection_id_group_id_map);
-					$self->tx->send(encode_json({
+					$self->tx->send(JSON->new->encode({
 						'type' => 'status', 
 						'status' => $message_status,
 					}));

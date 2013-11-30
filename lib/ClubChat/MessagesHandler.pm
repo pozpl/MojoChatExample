@@ -32,7 +32,7 @@ has 'message_registrator' => (
 
 sub handle_message(){
 	my ($self, $message_json, $connection_id, $connections_env_href) =@_;
-	my $message = decode_json($message_json);
+	my $message = JSON->new->decode($message_json);
 	
 	my $message_processing_status = 0;
 	if( $message->{'type'} eq 'auth'){		
