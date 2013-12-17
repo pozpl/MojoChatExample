@@ -35,10 +35,9 @@ sub startup {
 	my $clients_zones              = {};
 	my $connection_id_group_id_map = {};
 	
-#	my $cv = AE::cv;
 	
     my $message_handler = $self->get_bean('messages_handler');
-	my $subscription_service = $self->get_bean('subscriptions_service');
+    my $subscription_service = $self->get_bean('subscriptions_service');
     
     $self->hook(after_build_tx => sub {
             my ($tx, $app) = @_;
@@ -69,9 +68,6 @@ sub startup {
 						}
 					);
 					
-#					dump($new_connections);
-#					dump($clients_zones);
-#					dump($connection_id_group_id_map);
 					$self->tx->send(JSON->new->encode({
 						'type' => 'status', 
 						'status' => $message_status,
@@ -89,8 +85,6 @@ sub startup {
 		}
 	);
 	
-#	 $cv->recv();
-
 }
 
 1;
